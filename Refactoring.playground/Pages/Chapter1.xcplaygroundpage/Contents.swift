@@ -19,17 +19,23 @@ let invoice = Invoice(customer: "BigCo",
 
 // statement 메소드
 func statement(invoice: Invoice, plays: Play) throws -> String {
-    var totalAmount = 0
     var result = "청구내역(고객명:\(invoice.customer))\n"
 
     for perf in invoice.performances {
         // 청구 내역을 출력한다.
         result += "\((try playFor(perf)).name): \(usd(try amountFor(perf))) (\(perf.audience))석\n"
-        totalAmount += try amountFor(perf)
     }
 
-    result += "총액: \(usd(totalAmount))\n"
+    result += "총액: \(usd(try totalAmount()))\n"
     result += "적립 포인트: \(try totalVolumeCredits())점\n"
+    return result
+}
+
+func totalAmount() throws -> Int {
+    var result = 0
+    for perf in invoice.performances {
+        result += try amountFor(perf)
+    }
     return result
 }
 
@@ -134,4 +140,4 @@ test(result: try statement(invoice: invoice, plays: plays))
 ///  1. 작은 변수명을 하나를 바꿔도 컴파일 - 테스트 - 커밋을 한다.
 ///  2. 리팩토링하여 성능 저하가 의심되는 상황이 있더라도, 리팩토링을 잘해두면 성능개선에 유리하다.
 ///  - 지역변수를 제거하면 이후의 코드에서 영향력이 줄어서 코드를 추출하기에도 훨씬 편해진다.
-///  3.
+///  3. 함수 내의 리턴 값의 이름을 result로 한다. 코드의 쓰임이 명확해진다
