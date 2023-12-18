@@ -20,22 +20,19 @@ let invoice = Invoice(customer: "BigCo",
 // statement 메소드
 func statement(invoice: Invoice, plays: Play) throws -> String {
     var totalAmount = 0
-    var volumeCredits = 0
     var result = "청구내역(고객명:\(invoice.customer))\n"
 
-
     for perf in invoice.performances {
-        volumeCredits += try volumeCreditsFor(perf)
-
         // 청구 내역을 출력한다.
         result += "\((try playFor(perf)).name): \(usd(try amountFor(perf))) (\(perf.audience))석\n"
         totalAmount += try amountFor(perf)
     }
 
     result += "총액: \(usd(totalAmount))\n"
-    result += "적립 포인트: \(volumeCredits)점\n"
+    result += "적립 포인트: \(try totalVolumeCredits())점\n"
     return result
 }
+
 
 func usd(_ aNumber: Int) -> String {
     let formatter = NumberFormatter()
@@ -89,6 +86,13 @@ func volumeCreditsFor(_ aPerformance: Performance) throws -> Int {
     return result
 }
 
+func totalVolumeCredits() throws -> Int {
+    var result = 0
+    for perf in invoice.performances {
+        result += try volumeCreditsFor(perf)
+    }
+    return result
+}
 
 
 
