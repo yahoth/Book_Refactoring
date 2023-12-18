@@ -4,10 +4,10 @@ import XCTest
 
 
 // Sources 폴더 참조
-let plays: Play = [
-    "hamlet" : Theater(name: "Hamlet", type: "tragedy"),
-    "as-like" : Theater(name: "As You Like It", type: "comedy"),
-    "othello" : Theater(name: "Othello", type: "tragedy")
+let plays: Plays = [
+    "hamlet" : Play(name: "Hamlet", type: "tragedy"),
+    "as-like" : Play(name: "As You Like It", type: "comedy"),
+    "othello" : Play(name: "Othello", type: "tragedy")
 ]
 
 let invoice = Invoice(customer: "BigCo",
@@ -17,87 +17,118 @@ let invoice = Invoice(customer: "BigCo",
                         Performance(playID: "othello", audience: 40),
                       ])
 
+struct StatementData {
+    public let customer: String
+    public let performances: [Performance]
+    public let totalAmount: Int
+    public let totalVolumeCredits: Int
+
+    public init(customer: String, performances: [Performance], totalAmount: Int, totalVolumeCredits: Int) {
+        self.customer = customer
+        self.performances = performances
+        self.totalAmount = totalAmount
+        self.totalVolumeCredits = totalVolumeCredits
+    }
+}
+
+
 // statement 메소드
-func statement(invoice: Invoice, plays: Play) throws -> String {
-    var result = "청구내역(고객명:\(invoice.customer))\n"
+func statement(invoice: Invoice, plays: Plays) throws -> String {
+    let statementData = StatementData(customer: invoice.customer,
+                                      performances: try invoice.performances.map( enrichPerformance(_:)),
+                                      totalAmount: try totalAmount(),
+                                      totalVolumeCredits: try totalVolumeCredits())
+    return try renderPlainText(statementData, plays)
 
-    for perf in invoice.performances {
-        // 청구 내역을 출력한다.
-        result += "\((try playFor(perf)).name): \(usd(try amountFor(perf))) (\(perf.audience))석\n"
+    func enrichPerformance(_ aPerformance: Performance) throws -> Performance {
+        var result = aPerformance
+        result.play = try playFor(aPerformance)
+        result.amount = try amountFor(aPerformance)
+        result.volumeCredits = try volumeCreditsFor(aPerformance)
+
+        return result
     }
 
-    result += "총액: \(usd(try totalAmount()))\n"
-    result += "적립 포인트: \(try totalVolumeCredits())점\n"
-    return result
-}
+    func renderPlainText(_ data: StatementData, _ plays: Plays) throws -> String {
+        var result = "청구내역(고객명:\(data.customer))\n"
 
-func totalAmount() throws -> Int {
-    var result = 0
-    for perf in invoice.performances {
-        result += try amountFor(perf)
-    }
-    return result
-}
-
-
-func usd(_ aNumber: Int) -> String {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .currency
-    formatter.currencyCode = "USD"
-    formatter.locale = Locale(identifier: "en_US")
-    formatter.minimumFractionDigits = 2
-
-    if let formattedNumber = formatter.string(from: NSNumber(value: aNumber / 100)) {
-        return formattedNumber
-    } else {
-        return "format error"
-    }
-}
-
-func amountFor(_ aPerformance: Performance) throws -> Int {
-    var result = 0
-    switch (try playFor(aPerformance)).type {
-    case "tragedy":
-        result = 40000
-        if aPerformance.audience > 30 {
-            result += 1000 * (aPerformance.audience - 30)
+        for perf in data.performances {
+            // 청구 내역을 출력한다.
+            result += "\((try playFor(perf)).name): \(usd(try amountFor(perf))) (\(perf.audience))석\n"
         }
-        break
-    case "comedy":
-        result = 30000
-        if aPerformance.audience > 20 {
-            result += 10000 + (500 * (aPerformance.audience - 20))
+
+        result += "총액: \(usd(data.totalAmount))\n"
+        result += "적립 포인트: \(data.totalVolumeCredits)점\n"
+        return result
+    }
+
+    func totalAmount() throws -> Int {
+        var result = 0
+        for perf in invoice.performances {
+            result += try amountFor(perf)
         }
-        result += 300 * aPerformance.audience
-    default:
-        throw StatementError.typeError("알 수 없는 장르: \(String(describing: (try playFor(aPerformance)).type))")
-    }
-    return result
-}
-
-func playFor(_ aPerformance: Performance) throws -> Theater {
-    guard let play = plays[aPerformance.playID] else { throw StatementError.playIDError("연극명과 playID가 일치하지 않습니다.")
-    }
-    return play
-}
-
-func volumeCreditsFor(_ aPerformance: Performance) throws -> Int {
-    var result = 0
-    result += max(aPerformance.audience - 30, 0)
-
-    if "comedy" == (try playFor(aPerformance)).type {
-        result += aPerformance.audience / 5
+        return result
     }
 
-    return result
-}
-
-func totalVolumeCredits() throws -> Int {
-    var result = 0
-    for perf in invoice.performances {
-        result += try volumeCreditsFor(perf)
+    func totalVolumeCredits() throws -> Int {
+        var result = 0
+        for perf in invoice.performances {
+            result += try volumeCreditsFor(perf)
+        }
+        return result
     }
-    return result
+
+    func usd(_ aNumber: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.minimumFractionDigits = 2
+
+        if let formattedNumber = formatter.string(from: NSNumber(value: aNumber / 100)) {
+            return formattedNumber
+        } else {
+            return "format error"
+        }
+    }
+
+    func volumeCreditsFor(_ aPerformance: Performance) throws -> Int {
+        var result = 0
+        result += max(aPerformance.audience - 30, 0)
+
+        if "comedy" == (try playFor(aPerformance)).type {
+            result += aPerformance.audience / 5
+        }
+
+        return result
+    }
+
+    func playFor(_ aPerformance: Performance) throws -> Play {
+        guard let play = plays[aPerformance.playID] else { throw StatementError.playIDError("연극명과 playID가 일치하지 않습니다.")
+        }
+        return play
+    }
+
+    func amountFor(_ aPerformance: Performance) throws -> Int {
+        var result = 0
+        switch (try playFor(aPerformance)).type {
+        case "tragedy":
+            result = 40000
+            if aPerformance.audience > 30 {
+                result += 1000 * (aPerformance.audience - 30)
+            }
+            break
+        case "comedy":
+            result = 30000
+            if aPerformance.audience > 20 {
+                result += 10000 + (500 * (aPerformance.audience - 20))
+            }
+            result += 300 * aPerformance.audience
+        default:
+            throw StatementError.typeError("알 수 없는 장르: \(String(describing: (try playFor(aPerformance)).type))")
+        }
+        return result
+    }
 }
 
 
@@ -132,6 +163,7 @@ test(result: try statement(invoice: invoice, plays: plays))
 /// 1. safety하지 않다
 ///  - JS에선 array[name] 같은 경우 값의 유무에 따른 처리를 하지 않는다.
 ///  - 반면 swift에선 optional을 이용한다.
+///  - 또 JSON 파일을 디코딩할 때 Swift에선 타입 안전성을 위해 디코딩하는게 일반적이나, JS에선 디코딩 없이 바로 JSON파일에 접근한다.
 /// 2. 변수, 상수의 활용 차이가 있다.
 ///  - JS에선 let을 선언해도 값이 바뀐다.
 ///  - Swift에서 값이 바뀌는 것은 var 뿐이다.
