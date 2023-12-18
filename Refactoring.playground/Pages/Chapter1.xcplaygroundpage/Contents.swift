@@ -28,29 +28,28 @@ func statement(invoice: Invoice, plays: Play) throws -> String {
         volumeCredits += try volumeCreditsFor(perf)
 
         // 청구 내역을 출력한다.
-        result += "\((try playFor(perf)).name): \(format(try amountFor(perf) / 100)) (\(perf.audience))석\n"
+        result += "\((try playFor(perf)).name): \(usd(try amountFor(perf))) (\(perf.audience))석\n"
         totalAmount += try amountFor(perf)
     }
 
-    result += "총액: \(format(totalAmount / 100))\n"
+    result += "총액: \(usd(totalAmount))\n"
     result += "적립 포인트: \(volumeCredits)점\n"
     return result
 }
 
-func format(_ amount: Int) -> String {
+func usd(_ aNumber: Int) -> String {
     let formatter = NumberFormatter()
     formatter.numberStyle = .currency
     formatter.currencyCode = "USD"
     formatter.locale = Locale(identifier: "en_US")
     formatter.minimumFractionDigits = 2
 
-    if let formattedNumber = formatter.string(from: NSNumber(value: amount)) {
+    if let formattedNumber = formatter.string(from: NSNumber(value: aNumber / 100)) {
         return formattedNumber
     } else {
         return "format error"
     }
 }
-
 
 func amountFor(_ aPerformance: Performance) throws -> Int {
     var result = 0
@@ -119,3 +118,16 @@ test(result: try statement(invoice: invoice, plays: plays))
 /// -없애도 되는 변수가 있는가? -> 질의함수로 변경 playFor(aPerformance) -> 변수 인라인
 /// -
 /// -
+/// JS vs Swift
+/// 1. safety하지 않다
+///  - JS에선 array[name] 같은 경우 값의 유무에 따른 처리를 하지 않는다.
+///  - 반면 swift에선 optional을 이용한다.
+/// 2. 변수, 상수의 활용 차이가 있다.
+///  - JS에선 let을 선언해도 값이 바뀐다.
+///  - Swift에서 값이 바뀌는 것은 var 뿐이다.
+///
+///  Refactoring 시 규칙
+///  1. 작은 변수명을 하나를 바꿔도 컴파일 - 테스트 - 커밋을 한다.
+///  2. 리팩토링하여 성능 저하가 의심되는 상황이 있더라도, 리팩토링을 잘해두면 성능개선에 유리하다.
+///  - 지역변수를 제거하면 이후의 코드에서 영향력이 줄어서 코드를 추출하기에도 훨씬 편해진다.
+///  3.
