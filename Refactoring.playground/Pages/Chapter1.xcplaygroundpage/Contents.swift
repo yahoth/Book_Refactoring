@@ -23,29 +23,9 @@ func statement(invoice: Invoice, plays: Play) throws -> String {
     var volumeCredits = 0
     var result = "청구내역(고객명:\(invoice.customer))\n"
 
-    func format(_ amount: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.minimumFractionDigits = 2
-
-        if let formattedNumber = formatter.string(from: NSNumber(value: amount)) {
-            return formattedNumber
-        } else {
-            return "format error"
-        }
-    }
 
     for perf in invoice.performances {
-
-        // 포인트를 적립한다.
-        volumeCredits += max(perf.audience - 30, 0)
-
-        // 희극 관객 5명마다 추가 포인트를 제공한다.
-        if "comedy" == (try playFor(perf)).type {
-            volumeCredits += perf.audience / 5
-        }
+        volumeCredits += try volumeCreditsFor(perf)
 
         // 청구 내역을 출력한다.
         result += "\((try playFor(perf)).name): \(format(try amountFor(perf) / 100)) (\(perf.audience))석\n"
@@ -55,34 +35,63 @@ func statement(invoice: Invoice, plays: Play) throws -> String {
     result += "총액: \(format(totalAmount / 100))\n"
     result += "적립 포인트: \(volumeCredits)점\n"
     return result
+}
 
-    func amountFor(_ aPerformance: Performance) throws -> Int {
-        var result = 0
-        switch (try playFor(aPerformance)).type {
-        case "tragedy":
-            result = 40000
-            if aPerformance.audience > 30 {
-                result += 1000 * (aPerformance.audience - 30)
-            }
-            break
-        case "comedy":
-            result = 30000
-            if aPerformance.audience > 20 {
-                result += 10000 + (500 * (aPerformance.audience - 20))
-            }
-            result += 300 * aPerformance.audience
-        default:
-            throw StatementError.typeError("알 수 없는 장르: \(String(describing: (try playFor(aPerformance)).type))")
-        }
-        return result
-    }
+func format(_ amount: Int) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = "USD"
+    formatter.locale = Locale(identifier: "en_US")
+    formatter.minimumFractionDigits = 2
 
-    func playFor(_ aPerformance: Performance) throws -> Theater {
-        guard let play = plays[aPerformance.playID] else { throw StatementError.playIDError("연극명과 playID가 일치하지 않습니다.")
-        }
-        return play
+    if let formattedNumber = formatter.string(from: NSNumber(value: amount)) {
+        return formattedNumber
+    } else {
+        return "format error"
     }
 }
+
+
+func amountFor(_ aPerformance: Performance) throws -> Int {
+    var result = 0
+    switch (try playFor(aPerformance)).type {
+    case "tragedy":
+        result = 40000
+        if aPerformance.audience > 30 {
+            result += 1000 * (aPerformance.audience - 30)
+        }
+        break
+    case "comedy":
+        result = 30000
+        if aPerformance.audience > 20 {
+            result += 10000 + (500 * (aPerformance.audience - 20))
+        }
+        result += 300 * aPerformance.audience
+    default:
+        throw StatementError.typeError("알 수 없는 장르: \(String(describing: (try playFor(aPerformance)).type))")
+    }
+    return result
+}
+
+func playFor(_ aPerformance: Performance) throws -> Theater {
+    guard let play = plays[aPerformance.playID] else { throw StatementError.playIDError("연극명과 playID가 일치하지 않습니다.")
+    }
+    return play
+}
+
+func volumeCreditsFor(_ aPerformance: Performance) throws -> Int {
+    var result = 0
+    result += max(aPerformance.audience - 30, 0)
+
+    if "comedy" == (try playFor(aPerformance)).type {
+        result += aPerformance.audience / 5
+    }
+
+    return result
+}
+
+
+
 
 test(result: try statement(invoice: invoice, plays: plays))
 
