@@ -8,9 +8,9 @@ public enum StatementError: Error {
 
 
 // JS -> Swift 변환에 필요한 코드
-public typealias Play = [String: Theater]
+public typealias Plays = [String: Play]
 
-public struct Theater {
+public struct Play {
     public let name: String
     public let type: String
 
@@ -33,10 +33,14 @@ public struct Invoice {
 public struct Performance {
     public let playID: String
     public let audience: Int
+    public var play: Play?
+    public var amount: Int?
+    public var volumeCredits: Int?
 
-    public init(playID: String, audience: Int) {
+    public init(playID: String, audience: Int, play: Play? = nil) {
         self.playID = playID
         self.audience = audience
+        self.play = play
     }
 }
 
