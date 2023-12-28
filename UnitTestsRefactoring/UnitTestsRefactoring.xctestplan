@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "ED2CE998-0F27-49AF-94CB-B680B1D7E47F",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Refactoring-2.xcodeproj",
+        "identifier" : "767BC5C02B3D696D004C8765",
+        "name" : "UnitTestsRefactoring"
+      }
+    }
+  ],
+  "version" : 1
+}

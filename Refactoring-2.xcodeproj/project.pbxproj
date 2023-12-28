@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		767BC5C42B3D696E004C8765 /* UnitTestsRefactoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 767BC5C32B3D696E004C8765 /* UnitTestsRefactoring.swift */; };
+		767BC5C82B3D6985004C8765 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 767C8D562B3D405000BD6A99 /* main.swift */; };
 		767C8D572B3D405000BD6A99 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 767C8D562B3D405000BD6A99 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +25,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		767BC5C12B3D696E004C8765 /* UnitTestsRefactoring.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTestsRefactoring.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		767BC5C32B3D696E004C8765 /* UnitTestsRefactoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTestsRefactoring.swift; sourceTree = "<group>"; };
+		767BC5C92B3D69D3004C8765 /* UnitTestsRefactoring.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTestsRefactoring.xctestplan; sourceTree = "<group>"; };
 		767C8D532B3D405000BD6A99 /* Refactoring-2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Refactoring-2"; sourceTree = BUILT_PRODUCTS_DIR; };
 		767C8D562B3D405000BD6A99 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		76C9AA242B3D4C40002396FD /* Invoice.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Invoice.json; sourceTree = "<group>"; };
@@ -30,6 +35,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		767BC5BE2B3D696D004C8765 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		767C8D502B3D405000BD6A99 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -40,10 +52,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		767BC5C22B3D696E004C8765 /* UnitTestsRefactoring */ = {
+			isa = PBXGroup;
+			children = (
+				767BC5C32B3D696E004C8765 /* UnitTestsRefactoring.swift */,
+				767BC5C92B3D69D3004C8765 /* UnitTestsRefactoring.xctestplan */,
+			);
+			path = UnitTestsRefactoring;
+			sourceTree = "<group>";
+		};
 		767C8D4A2B3D405000BD6A99 = {
 			isa = PBXGroup;
 			children = (
 				767C8D552B3D405000BD6A99 /* Refactoring-2 */,
+				767BC5C22B3D696E004C8765 /* UnitTestsRefactoring */,
 				767C8D542B3D405000BD6A99 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -52,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				767C8D532B3D405000BD6A99 /* Refactoring-2 */,
+				767BC5C12B3D696E004C8765 /* UnitTestsRefactoring.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -77,6 +100,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		767BC5C02B3D696D004C8765 /* UnitTestsRefactoring */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 767BC5C72B3D696E004C8765 /* Build configuration list for PBXNativeTarget "UnitTestsRefactoring" */;
+			buildPhases = (
+				767BC5BD2B3D696D004C8765 /* Sources */,
+				767BC5BE2B3D696D004C8765 /* Frameworks */,
+				767BC5BF2B3D696D004C8765 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UnitTestsRefactoring;
+			productName = UnitTestsRefactoring;
+			productReference = 767BC5C12B3D696E004C8765 /* UnitTestsRefactoring.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		767C8D522B3D405000BD6A99 /* Refactoring-2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 767C8D5A2B3D405000BD6A99 /* Build configuration list for PBXNativeTarget "Refactoring-2" */;
@@ -104,6 +144,9 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					767BC5C02B3D696D004C8765 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
 					767C8D522B3D405000BD6A99 = {
 						CreatedOnToolsVersion = 15.0.1;
 					};
@@ -123,11 +166,31 @@
 			projectRoot = "";
 			targets = (
 				767C8D522B3D405000BD6A99 /* Refactoring-2 */,
+				767BC5C02B3D696D004C8765 /* UnitTestsRefactoring */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		767BC5BF2B3D696D004C8765 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		767BC5BD2B3D696D004C8765 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				767BC5C82B3D6985004C8765 /* main.swift in Sources */,
+				767BC5C42B3D696E004C8765 /* UnitTestsRefactoring.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		767C8D4F2B3D405000BD6A99 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -139,6 +202,36 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		767BC5C52B3D696E004C8765 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 54ZG4WU22U;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codeduck.UnitTestsRefactoring;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		767BC5C62B3D696E004C8765 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 54ZG4WU22U;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codeduck.UnitTestsRefactoring;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		767C8D582B3D405000BD6A99 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -282,6 +375,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		767BC5C72B3D696E004C8765 /* Build configuration list for PBXNativeTarget "UnitTestsRefactoring" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				767BC5C52B3D696E004C8765 /* Debug */,
+				767BC5C62B3D696E004C8765 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		767C8D4E2B3D405000BD6A99 /* Build configuration list for PBXProject "Refactoring-2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
