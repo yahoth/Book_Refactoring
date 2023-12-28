@@ -7,199 +7,150 @@
 
 import Foundation
 
-
-// Test
-public let expected = "청구내역(고객명:BigCo)\n" + "Hamlet: $650.00 (55)석\n" + "As You Like It: $580.00 (35)석\n" + "Othello: $500.00 (40)석\n" + "총액: $1,730.00\n"+"적립 포인트: 47점\n"
-
-public func test(result: String) {
-    let testMessage = result == expected ? "Test Passed" : "Test Failed"
-    print("\(nowTime())) \(testMessage)")
-}
-
-func nowTime() -> String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-    dateFormatter.locale = Locale(identifier: "ko_KR")
-    return dateFormatter.string(from: Date())
-}
-
-
-// 에러 처리
-public enum StatementError: Error {
-    case typeError(String)
-    case playIDError(String)
-}
-
-
-// JS -> Swift 변환에 필요한 코드
-public typealias Plays = [String: Play]
-
-public struct Play {
-    public let name: String
-    public let type: String
-
-    public init(name: String, type: String) {
-        self.name = name
-        self.type = type
+class Refactoring {
+    
+    enum CustomError: Error {
+        case unknown
     }
-}
-
-public struct Invoice {
-    public let customer: String
-    public let performances: [Performance]
-
-    public init(customer: String, performances: [Performance]) {
-        self.customer = customer
-        self.performances = performances
+    
+    typealias Plays = [String: Play]
+    
+    struct Play {
+        let name: String
+        let type: String
     }
-}
-
-public struct Performance {
-    public let playID: String
-    public let audience: Int
-    public var play: Play?
-    public var amount: Int?
-    public var volumeCredits: Int?
-
-    public init(playID: String, audience: Int, play: Play? = nil) {
-        self.playID = playID
-        self.audience = audience
-        self.play = play
+    
+    struct Invoice {
+        let customer: String
+        let performances: [Performance]
     }
-}
-
-
-// Sources 폴더 참조
-let plays: Plays = [
-    "hamlet" : Play(name: "Hamlet", type: "tragedy"),
-    "as-like" : Play(name: "As You Like It", type: "comedy"),
-    "othello" : Play(name: "Othello", type: "tragedy")
-]
-
-let invoice = Invoice(customer: "BigCo",
-                      performances: [
-                        Performance(playID: "hamlet", audience: 55),
-                        Performance(playID: "as-like", audience: 35),
-                        Performance(playID: "othello", audience: 40),
-                      ])
-
-struct StatementData {
-    public let customer: String
-    public let performances: [Performance]
-    public let totalAmount: Int
-    public let totalVolumeCredits: Int
-
-    public init(customer: String, performances: [Performance], totalAmount: Int, totalVolumeCredits: Int) {
-        self.customer = customer
-        self.performances = performances
-        self.totalAmount = totalAmount
-        self.totalVolumeCredits = totalVolumeCredits
+    
+    struct Performance {
+        let playID: String
+        let audience: Int
+        var play: Play?
+        var amount: Int?
+        var volumeCredits: Int?
     }
-}
-
-
-// statement 메소드
-func statement(invoice: Invoice, plays: Plays) throws -> String {
-    let statementData = StatementData(customer: invoice.customer,
-                                      performances: try invoice.performances.map( enrichPerformance(_:)),
-                                      totalAmount: try totalAmount(),
-                                      totalVolumeCredits: try totalVolumeCredits())
-    return try renderPlainText(statementData, plays)
-
-    func enrichPerformance(_ aPerformance: Performance) throws -> Performance {
-        var result = aPerformance
-        result.play = try playFor(aPerformance)
-        result.amount = try amountFor(aPerformance)
-        result.volumeCredits = try volumeCreditsFor(aPerformance)
-
-        return result
+    
+    struct StatementData {
+        let customer: String
+        let performances: [Performance]
+        let totalAmount: Int
+        let totalVolumeCredits: Int
     }
-
-    func renderPlainText(_ data: StatementData, _ plays: Plays) throws -> String {
-        var result = "청구내역(고객명:\(data.customer))\n"
-
-        for perf in data.performances {
-            // 청구 내역을 출력한다.
-            result += "\((try playFor(perf)).name): \(usd(try amountFor(perf))) (\(perf.audience))석\n"
+    
+    let plays: Plays = [
+        "hamlet" : Play(name: "Hamlet", type: "tragedy"),
+        "as-like" : Play(name: "As You Like It", type: "comedy"),
+        "othello" : Play(name: "Othello", type: "tragedy")
+    ]
+    
+    let invoice = Invoice(customer: "BigCo",
+                          performances: [
+                            Performance(playID: "hamlet", audience: 55),
+                            Performance(playID: "as-like", audience: 35),
+                            Performance(playID: "othello", audience: 40),
+                          ])
+    
+    // statement 메소드
+    func statement(invoice: Invoice, plays: Plays) throws -> String {
+        let statementData = StatementData(customer: invoice.customer,
+                                          performances: try invoice.performances.map( enrichPerformance(_:)),
+                                          totalAmount: try totalAmount(),
+                                          totalVolumeCredits: totalVolumeCredits())
+        return try renderPlainText(statementData, plays)
+        
+        func enrichPerformance(_ aPerformance: Performance) throws -> Performance {
+            var result = aPerformance
+            result.play = playFor(aPerformance)
+            result.amount = try amountFor(aPerformance)
+            result.volumeCredits = volumeCreditsFor(aPerformance)
+            
+            return result
         }
-
-        result += "총액: \(usd(data.totalAmount))\n"
-        result += "적립 포인트: \(data.totalVolumeCredits)점\n"
-        return result
-    }
-
-    func totalAmount() throws -> Int {
-        var result = 0
-        for perf in invoice.performances {
-            result += try amountFor(perf)
-        }
-        return result
-    }
-
-    func totalVolumeCredits() throws -> Int {
-        var result = 0
-        for perf in invoice.performances {
-            result += try volumeCreditsFor(perf)
-        }
-        return result
-    }
-
-    func usd(_ aNumber: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.minimumFractionDigits = 2
-
-        if let formattedNumber = formatter.string(from: NSNumber(value: aNumber / 100)) {
-            return formattedNumber
-        } else {
-            return "format error"
-        }
-    }
-
-    func volumeCreditsFor(_ aPerformance: Performance) throws -> Int {
-        var result = 0
-        result += max(aPerformance.audience - 30, 0)
-
-        if "comedy" == (try playFor(aPerformance)).type {
-            result += aPerformance.audience / 5
-        }
-
-        return result
-    }
-
-    func playFor(_ aPerformance: Performance) throws -> Play {
-        guard let play = plays[aPerformance.playID] else { throw StatementError.playIDError("연극명과 playID가 일치하지 않습니다.")
-        }
-        return play
-    }
-
-    func amountFor(_ aPerformance: Performance) throws -> Int {
-        var result = 0
-        switch (try playFor(aPerformance)).type {
-        case "tragedy":
-            result = 40000
-            if aPerformance.audience > 30 {
-                result += 1000 * (aPerformance.audience - 30)
+        
+        func renderPlainText(_ data: StatementData, _ plays: Plays) throws -> String {
+            var result = "청구내역(고객명:\(data.customer))\n"
+            
+            for perf in data.performances {
+                // 청구 내역을 출력한다.
+                result += "\(playFor(perf)?.name ?? ""): \(usd(try amountFor(perf))) (\(perf.audience))석\n"
             }
-            break
-        case "comedy":
-            result = 30000
-            if aPerformance.audience > 20 {
-                result += 10000 + (500 * (aPerformance.audience - 20))
-            }
-            result += 300 * aPerformance.audience
-        default:
-            throw StatementError.typeError("알 수 없는 장르: \(String(describing: (try playFor(aPerformance)).type))")
+            
+            result += "총액: \(usd(data.totalAmount))\n"
+            result += "적립 포인트: \(data.totalVolumeCredits)점\n"
+            return result
         }
-        return result
+        
+        func totalAmount() throws -> Int {
+            var result = 0
+            for perf in invoice.performances {
+                result += try amountFor(perf)
+            }
+            return result
+        }
+        
+        func totalVolumeCredits() -> Int {
+            var result = 0
+            for perf in invoice.performances {
+                result += volumeCreditsFor(perf)
+            }
+            return result
+        }
+        
+        func usd(_ aNumber: Int) -> String {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .currency
+            formatter.currencyCode = "USD"
+            formatter.locale = Locale(identifier: "en_US")
+            formatter.minimumFractionDigits = 2
+            
+            if let formattedNumber = formatter.string(from: NSNumber(value: aNumber / 100)) {
+                return formattedNumber
+            } else {
+                return "format error"
+            }
+        }
+        
+        func volumeCreditsFor(_ aPerformance: Performance) -> Int {
+            var result = 0
+            result += max(aPerformance.audience - 30, 0)
+            
+            if "comedy" == playFor(aPerformance)?.type {
+                result += aPerformance.audience / 5
+            }
+            
+            return result
+        }
+        
+        func playFor(_ aPerformance: Performance) -> Play? {
+            let play = plays[aPerformance.playID]
+            return play
+        }
+        
+        func amountFor(_ aPerformance: Performance) throws -> Int {
+            var result = 0
+            switch playFor(aPerformance)?.type {
+            case "tragedy":
+                result = 40000
+                if aPerformance.audience > 30 {
+                    result += 1000 * (aPerformance.audience - 30)
+                }
+                break
+            case "comedy":
+                result = 30000
+                if aPerformance.audience > 20 {
+                    result += 10000 + (500 * (aPerformance.audience - 20))
+                }
+                result += 300 * aPerformance.audience
+            default:
+                throw CustomError.unknown
+            }
+            return result
+        }
     }
 }
-
-
-
-test(result: try statement(invoice: invoice, plays: plays))
 
 
 /// 함수 추출하기
