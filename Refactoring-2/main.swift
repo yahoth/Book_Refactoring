@@ -8,6 +8,66 @@
 import Foundation
 
 
+// Test
+public let expected = "청구내역(고객명:BigCo)\n" + "Hamlet: $650.00 (55)석\n" + "As You Like It: $580.00 (35)석\n" + "Othello: $500.00 (40)석\n" + "총액: $1,730.00\n"+"적립 포인트: 47점\n"
+
+public func test(result: String) {
+    let testMessage = result == expected ? "Test Passed" : "Test Failed"
+    print("\(nowTime())) \(testMessage)")
+}
+
+func nowTime() -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+    dateFormatter.locale = Locale(identifier: "ko_KR")
+    return dateFormatter.string(from: Date())
+}
+
+
+// 에러 처리
+public enum StatementError: Error {
+    case typeError(String)
+    case playIDError(String)
+}
+
+
+// JS -> Swift 변환에 필요한 코드
+public typealias Plays = [String: Play]
+
+public struct Play {
+    public let name: String
+    public let type: String
+
+    public init(name: String, type: String) {
+        self.name = name
+        self.type = type
+    }
+}
+
+public struct Invoice {
+    public let customer: String
+    public let performances: [Performance]
+
+    public init(customer: String, performances: [Performance]) {
+        self.customer = customer
+        self.performances = performances
+    }
+}
+
+public struct Performance {
+    public let playID: String
+    public let audience: Int
+    public var play: Play?
+    public var amount: Int?
+    public var volumeCredits: Int?
+
+    public init(playID: String, audience: Int, play: Play? = nil) {
+        self.playID = playID
+        self.audience = audience
+        self.play = play
+    }
+}
+
 
 // Sources 폴더 참조
 let plays: Plays = [

@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		767C8D572B3D405000BD6A99 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 767C8D562B3D405000BD6A99 /* main.swift */; };
-		76C8E2E12B3D424500F0E05F /* JS -> Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C8E2E02B3D424500F0E05F /* JS -> Swift.swift */; };
-		76C8E2E32B3D424800F0E05F /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C8E2E22B3D424800F0E05F /* Tests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,10 +25,8 @@
 /* Begin PBXFileReference section */
 		767C8D532B3D405000BD6A99 /* Refactoring-2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Refactoring-2"; sourceTree = BUILT_PRODUCTS_DIR; };
 		767C8D562B3D405000BD6A99 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		76C8E2DE2B3D423F00F0E05F /* 1.plays.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = 1.plays.json; path = Refactoring.playground/Pages/Chapter1.xcplaygroundpage/Sources/1.plays.json; sourceTree = SOURCE_ROOT; };
-		76C8E2DF2B3D424200F0E05F /* 2.invoices.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = 2.invoices.json; path = Refactoring.playground/Pages/Chapter1.xcplaygroundpage/Sources/2.invoices.json; sourceTree = SOURCE_ROOT; };
-		76C8E2E02B3D424500F0E05F /* JS -> Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "JS -> Swift.swift"; path = "Refactoring.playground/Pages/Chapter1.xcplaygroundpage/Sources/JS -> Swift.swift"; sourceTree = SOURCE_ROOT; };
-		76C8E2E22B3D424800F0E05F /* Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Tests.swift; path = Refactoring.playground/Pages/Chapter1.xcplaygroundpage/Sources/Tests.swift; sourceTree = SOURCE_ROOT; };
+		76C9AA242B3D4C40002396FD /* Invoice.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Invoice.json; sourceTree = "<group>"; };
+		76C9AA252B3D4C4D002396FD /* Plays.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Plays.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,8 +60,6 @@
 			isa = PBXGroup;
 			children = (
 				767C8D562B3D405000BD6A99 /* main.swift */,
-				76C8E2E02B3D424500F0E05F /* JS -> Swift.swift */,
-				76C8E2E22B3D424800F0E05F /* Tests.swift */,
 				76C8E2DD2B3D422F00F0E05F /* JSON */,
 			);
 			path = "Refactoring-2";
@@ -74,8 +68,8 @@
 		76C8E2DD2B3D422F00F0E05F /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				76C8E2DF2B3D424200F0E05F /* 2.invoices.json */,
-				76C8E2DE2B3D423F00F0E05F /* 1.plays.json */,
+				76C9AA242B3D4C40002396FD /* Invoice.json */,
+				76C9AA252B3D4C4D002396FD /* Plays.json */,
 			);
 			path = JSON;
 			sourceTree = "<group>";
@@ -139,8 +133,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				767C8D572B3D405000BD6A99 /* main.swift in Sources */,
-				76C8E2E32B3D424800F0E05F /* Tests.swift in Sources */,
-				76C8E2E12B3D424500F0E05F /* JS -> Swift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
